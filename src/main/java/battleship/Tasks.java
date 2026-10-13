@@ -39,7 +39,8 @@ public class Tasks {
 	public static void menu() {
 
 		IFleet myFleet = null;
-		IGame game = null;
+		Game game = null;
+		PdfExporter pdf = null;
 		menuHelp();
 
 		System.out.print("> ");
@@ -51,11 +52,17 @@ public class Tasks {
 				case GERAFROTA:
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
+
+					pdf = game.getPdfExporter();
+
 					game.printMyBoard(false, true);
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
+
+					pdf = game.getPdfExporter();
+
 					game.printMyBoard(false, true);
 					break;
 				case STATUS:
@@ -72,6 +79,11 @@ public class Tasks {
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
+						Game currentGame = game;
+						//String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, true);});
+						String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+						pdf.escrever(output);
+
 						if (game.getRemainingShips() == 0) {
 							game.over();
 							System.exit(0);
@@ -84,8 +96,14 @@ public class Tasks {
 							game.randomEnemyFire();
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
+
+							Game currentGame = game;
+							//String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, true);});
+							String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+							pdf.escrever(output);
+
 							try {
-								Thread.sleep(3000);
+								Thread.sleep(500);
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
 							}
@@ -110,6 +128,7 @@ public class Tasks {
 			System.out.print("> ");
 			command = in.next();
 		}
+
 		System.out.println(GOODBYE_MESSAGE);
 	}
 
