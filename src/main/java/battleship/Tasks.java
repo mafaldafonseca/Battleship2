@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
  * The type Tasks.
  */
 public class Tasks {
+
+	private static final BoardViewer viewer = new BoardViewer();
 	/**
 	 * The constant LOGGER.
 	 */
@@ -38,6 +40,8 @@ public class Tasks {
 	 */
 	public static void menu() {
 
+		viewer.setVisible(true);
+
 		IFleet myFleet = null;
 		IGame game = null;
 		menuHelp();
@@ -52,6 +56,9 @@ public class Tasks {
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+
+					viewer.updateBoard(game);
+
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
@@ -72,6 +79,8 @@ public class Tasks {
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
+						viewer.updateBoard(game);
+
 						if (game.getRemainingShips() == 0) {
 							game.over();
 							System.exit(0);
@@ -84,6 +93,9 @@ public class Tasks {
 							game.randomEnemyFire();
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
+
+							viewer.updateBoard(game);
+
 							try {
 								Thread.sleep(3000);
 							} catch (InterruptedException e) {

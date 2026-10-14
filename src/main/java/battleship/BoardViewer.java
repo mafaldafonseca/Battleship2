@@ -6,6 +6,7 @@ import org.jdesktop.swingx.JXPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 public class BoardViewer extends JXFrame {
     private static final int BOARD_SIZE = 10;
@@ -39,8 +40,48 @@ public class BoardViewer extends JXFrame {
         add(boardPanel, BorderLayout.CENTER);
     }
 
-    public JButton[][] getGridButtons() {
-        return gridButtons;
-    }
+    /**
+     * Atualiza o estado visual do tabuleiro com base nas jogadas efetuadas no jogo.
+     *
+     * @param game Objeto do jogo
+     */
+    public void updateBoard(IGame game) {
+        if (game == null) return;
 
+        // Guardar os tiros efetuados
+        List<IMove> moves = game.getAlienMoves();
+        IFleet fleet = game.getMyFleet();
+
+        for (int row = 0; row < BOARD_SIZE; row++) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+
+                // As posições internas da matriz/tabuleiro vão de 0 a 9
+                IPosition currentPos = new Position(row, col);
+
+                // Verificar se a posição atual esta presente nas jogadas efetuadas
+                boolean wasShot = moves != null && moves.stream()
+                        .filter(move -> move != null && move.getShots() != null)
+                        .flatMap(move -> move.getShots().stream())
+                        .anyMatch(pos -> pos.equals(currentPos));
+
+                if (wasShot) {
+                    // Verificar se a posição atingiu algum navio da frota
+                    boolean hit = (fleet != null && fleet.getShips() != null) && fleet.getShips().stream()
+                            .anyMatch(ship -> ship.occupies(currentPos));
+
+                    if (hit) {
+                        gridButtons[row][col].setBackground(Color.RED);
+                        gridButtons[row][col].setForeground(Color.WHITE);
+                        gridButtons[row][col].setFont(new Font("Arial", Font.BOLD, 20));
+                        gridButtons[row][col].setText("*");
+                    } else {
+                        gridButtons[row][col].setBackground(Color.GRAY);
+                        gridButtons[row][col].setForeground(Color.BLACK);
+                        gridButtons[row][col].setText("O");
+                    }
+                }
+            }
+        }
+        repaint();
+    }
 }
