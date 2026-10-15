@@ -5,6 +5,8 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Tasks.
@@ -40,6 +42,11 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		IGame game = null;
+
+        StopWatch relogio = new StopWatch();
+
+        long tempoTotal = 0;
+
 		menuHelp();
 
 		System.out.print("> ");
@@ -66,19 +73,38 @@ public class Tasks {
 					if (myFleet != null)
 						game.printMyBoard(false, true);
 					break;
-				case RAJADA:
-					if (game != null) {
-						game.readEnemyFire(in);
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
 
-						if (game.getRemainingShips() == 0) {
-							game.over();
-							System.exit(0);
-						}
-					}
-					break;
-				case SIMULA:
+                case RAJADA:
+                    if (game != null) {
+
+                        relogio.reset();
+                        relogio.start();
+
+                        game.readEnemyFire(in);
+
+                        relogio.stop();
+
+                        long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
+
+                        tempoTotal += tempoJogada;
+
+                        System.out.printf("Tempo da jogada: %.3f segundos%n",
+                                tempoJogada / 1000.0);
+
+                        System.out.printf("Tempo total acumulado: %.3f segundos%n",
+                                tempoTotal / 1000.0);
+
+                        myFleet.printStatus();
+                        game.printMyBoard(true, false);
+
+                        if (game.getRemainingShips() == 0) {
+                            game.over();
+                            System.exit(0);
+                        }
+                    }
+                    break;
+
+                case SIMULA:
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
