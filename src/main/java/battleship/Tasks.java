@@ -5,11 +5,15 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Tasks.
  */
 public class Tasks {
+
+	private static final BoardViewer viewer = new BoardViewer();
 	/**
 	 * The constant LOGGER.
 	 */
@@ -38,9 +42,16 @@ public class Tasks {
 	 */
 	public static void menu() {
 
+		viewer.setVisible(true);
+
 		IFleet myFleet = null;
 		Game game = null;
 		PdfExporter pdf = null;
+
+		StopWatch relogio = new StopWatch();
+
+		long tempoTotal = 0;
+
 		menuHelp();
 
 		System.out.print("> ");
@@ -56,6 +67,9 @@ public class Tasks {
 					pdf = game.getPdfExporter();
 
 					game.printMyBoard(false, true);
+
+					viewer.updateBoard(game);
+
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
@@ -73,14 +87,32 @@ public class Tasks {
 					if (myFleet != null)
 						game.printMyBoard(false, true);
 					break;
+
 				case RAJADA:
 					if (game != null) {
+
+						relogio.reset();
+						relogio.start();
+
 						game.readEnemyFire(in);
+
+						relogio.stop();
+
+						long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
+						tempoTotal += tempoJogada;
+
+						System.out.printf("Tempo da jogada: %.3f segundos%n",
+								tempoJogada / 1000.0);
+
+						System.out.printf("Tempo total acumulado: %.3f segundos%n",
+								tempoTotal / 1000.0);
+
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
+						viewer.updateBoard(game);
+
 						Game currentGame = game;
-						//String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, true);});
 						String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
 						pdf.escrever(output);
 
@@ -97,8 +129,9 @@ public class Tasks {
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
 
+							viewer.updateBoard(game);
+
 							Game currentGame = game;
-							//String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, true);});
 							String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
 							pdf.escrever(output);
 
@@ -119,9 +152,9 @@ public class Tasks {
 					if (game != null)
 						game.printMyBoard(true, true);
 					break;
-                case AJUDA:
-                    menuHelp();
-                    break;
+				case AJUDA:
+					menuHelp();
+					break;
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
