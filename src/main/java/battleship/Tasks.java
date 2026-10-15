@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
  * The type Tasks.
  */
 public class Tasks {
+
+	private static final BoardViewer viewer = new BoardViewer();
 	/**
 	 * The constant LOGGER.
 	 */
@@ -40,6 +42,8 @@ public class Tasks {
 	 */
 	public static void menu() {
 
+		viewer.setVisible(true);
+
 		IFleet myFleet = null;
 		IGame game = null;
 
@@ -59,6 +63,9 @@ public class Tasks {
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
 					game.printMyBoard(false, true);
+
+					viewer.updateBoard(game);
+
 					break;
 				case LEFROTA:
 					myFleet = buildFleet(in);
@@ -74,42 +81,48 @@ public class Tasks {
 						game.printMyBoard(false, true);
 					break;
 
-                case RAJADA:
-                    if (game != null) {
 
-                        relogio.reset();
-                        relogio.start();
+case RAJADA:
+    if (game != null) {
 
-                        game.readEnemyFire(in);
+        relogio.reset();
+        relogio.start();
 
-                        relogio.stop();
+        game.readEnemyFire(in);
 
-                        long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
+        relogio.stop();
 
-                        tempoTotal += tempoJogada;
+        long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
+        tempoTotal += tempoJogada;
 
-                        System.out.printf("Tempo da jogada: %.3f segundos%n",
-                                tempoJogada / 1000.0);
+        System.out.printf("Tempo da jogada: %.3f segundos%n",
+                tempoJogada / 1000.0);
 
-                        System.out.printf("Tempo total acumulado: %.3f segundos%n",
-                                tempoTotal / 1000.0);
+        System.out.printf("Tempo total acumulado: %.3f segundos%n",
+                tempoTotal / 1000.0);
 
-                        myFleet.printStatus();
-                        game.printMyBoard(true, false);
+        myFleet.printStatus();
+        game.printMyBoard(true, false);
 
-                        if (game.getRemainingShips() == 0) {
-                            game.over();
-                            System.exit(0);
-                        }
-                    }
-                    break;
+        viewer.updateBoard(game);
 
-                case SIMULA:
+        if (game.getRemainingShips() == 0) {
+            game.over();
+            System.exit(0);
+        }
+    }
+    break;
+
+case SIMULA:
+
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
+
+							viewer.updateBoard(game);
+
 							try {
 								Thread.sleep(3000);
 							} catch (InterruptedException e) {
