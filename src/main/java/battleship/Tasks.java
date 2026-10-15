@@ -84,15 +84,15 @@ public class Tasks {
 
                         relogio.stop();
 
-                        long tempoJogada = relogio.getTime(TimeUnit.NANOSECONDS);
+                        long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
 
                         tempoTotal += tempoJogada;
 
                         System.out.printf("Tempo da jogada: %.3f segundos%n",
-                                tempoJogada / 1_000_000_000.0);
+                                tempoJogada / 1000.0);
 
                         System.out.printf("Tempo total acumulado: %.3f segundos%n",
-                                tempoTotal / 1_000_000_000.0);
+                                tempoTotal / 1000.0);
 
                         myFleet.printStatus();
                         game.printMyBoard(true, false);
