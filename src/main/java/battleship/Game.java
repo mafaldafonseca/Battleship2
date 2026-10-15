@@ -163,6 +163,7 @@ public class Game implements IGame
 	private final IFleet alienFleet;
 	private final List<IMove> myMoves;
 
+	private PdfExporter pdf;
 	private Integer countInvalidShots;
 	private Integer countRepeatedShots;
 	private Integer countHits;
@@ -184,6 +185,8 @@ public class Game implements IGame
 		this.countRepeatedShots = 0;
 		this.countHits = 0;
 		this.countSinks = 0;
+
+		this.pdf = new PdfExporter();
 	}
 
 	@Override
@@ -446,10 +449,21 @@ public class Game implements IGame
 		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
 	}
 
+	public PdfExporter getPdfExporter() {
+		return this.pdf;
+	}
+
 	public void over() {
-			System.out.println();
-			System.out.println("+--------------------------------------------------------------+");
-			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
-			System.out.println("+--------------------------------------------------------------+");
+
+
+
+		//String output = pdf.capturarOutputDoJogo(() -> {printMyBoard(true, true);});
+		System.out.println(this.pdf.historicoAtual());
+		this.pdf.exportarParaPdf("teste.pdf");
+
+		System.out.println();
+		System.out.println("+--------------------------------------------------------------+");
+		System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
+		System.out.println("+--------------------------------------------------------------+");
 	}
 }

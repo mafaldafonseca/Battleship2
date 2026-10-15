@@ -45,11 +45,12 @@ public class Tasks {
 		viewer.setVisible(true);
 
 		IFleet myFleet = null;
-		IGame game = null;
+		Game game = null;
+		PdfExporter pdf = null;
 
-        StopWatch relogio = new StopWatch();
+		StopWatch relogio = new StopWatch();
 
-        long tempoTotal = 0;
+		long tempoTotal = 0;
 
 		menuHelp();
 
@@ -62,6 +63,9 @@ public class Tasks {
 				case GERAFROTA:
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
+
+					pdf = game.getPdfExporter();
+
 					game.printMyBoard(false, true);
 
 					viewer.updateBoard(game);
@@ -70,6 +74,9 @@ public class Tasks {
 				case LEFROTA:
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
+
+					pdf = game.getPdfExporter();
+
 					game.printMyBoard(false, true);
 					break;
 				case STATUS:
@@ -81,40 +88,41 @@ public class Tasks {
 						game.printMyBoard(false, true);
 					break;
 
+				case RAJADA:
+					if (game != null) {
 
-case RAJADA:
-    if (game != null) {
+						relogio.reset();
+						relogio.start();
 
-        relogio.reset();
-        relogio.start();
+						game.readEnemyFire(in);
 
-        game.readEnemyFire(in);
+						relogio.stop();
 
-        relogio.stop();
+						long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
+						tempoTotal += tempoJogada;
 
-        long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
-        tempoTotal += tempoJogada;
+						System.out.printf("Tempo da jogada: %.3f segundos%n",
+								tempoJogada / 1000.0);
 
-        System.out.printf("Tempo da jogada: %.3f segundos%n",
-                tempoJogada / 1000.0);
+						System.out.printf("Tempo total acumulado: %.3f segundos%n",
+								tempoTotal / 1000.0);
 
-        System.out.printf("Tempo total acumulado: %.3f segundos%n",
-                tempoTotal / 1000.0);
+						myFleet.printStatus();
+						game.printMyBoard(true, false);
 
-        myFleet.printStatus();
-        game.printMyBoard(true, false);
+						viewer.updateBoard(game);
 
-        viewer.updateBoard(game);
+						Game currentGame = game;
+						String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+						pdf.escrever(output);
 
-        if (game.getRemainingShips() == 0) {
-            game.over();
-            System.exit(0);
-        }
-    }
-    break;
-
-case SIMULA:
-
+						if (game.getRemainingShips() == 0) {
+							game.over();
+							System.exit(0);
+						}
+					}
+					break;
+				case SIMULA:
 					if (game != null) {
 						while (game.getRemainingShips() > 0){
 							game.randomEnemyFire();
@@ -123,8 +131,12 @@ case SIMULA:
 
 							viewer.updateBoard(game);
 
+							Game currentGame = game;
+							String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+							pdf.escrever(output);
+
 							try {
-								Thread.sleep(3000);
+								Thread.sleep(500);
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
 							}
@@ -140,15 +152,16 @@ case SIMULA:
 					if (game != null)
 						game.printMyBoard(true, true);
 					break;
-                case AJUDA:
-                    menuHelp();
-                    break;
+				case AJUDA:
+					menuHelp();
+					break;
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
 			System.out.print("> ");
 			command = in.next();
 		}
+
 		System.out.println(GOODBYE_MESSAGE);
 	}
 
