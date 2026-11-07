@@ -7,3 +7,4 @@ projectJDK: "21"
 profile:
   path: .qodana/profiles/profile-123171.yaml
 
+failThreshold: 0
