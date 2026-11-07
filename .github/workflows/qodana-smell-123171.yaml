@@ -1,4 +1,3 @@
-
 # 123171 - Inês Fidalgo
 name: Qodana Long Method - 123171
 
@@ -16,14 +15,22 @@ permissions:
 jobs:
   qodana:
     runs-on: ubuntu-latest
+    env:
+      # Defina como "true" se quiser focar apenas nas alterações do Pull Request,
+      # ou "false" para analisar o projeto completo.
+      QODANA_PR_MODE: "false"
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - uses: JetBrains/qodana-action@v2026.2
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2026.2
         with:
           args: --config qodana-123171.yaml
           use-annotations: true
-          post-pr-comment: false
+          # Coloque a true se quiser que a action comente automaticamente no Pull Request
+          post-pr-comment: true

@@ -1,15 +1,13 @@
-
 # 123171 - Inês Fidalgo
 profile:
   base:
     name: empty
   inspections:
-    - inspection: NonCommentSourceStatements
+    - inspection: Java/MethodMetrics/OverlyLongMethod
       enabled: true
       options:
         m_limit: 30
-
-    - inspection: CyclomaticComplexity
+    - inspection: Java/MethodMetrics/OverlyComplexMethod
       enabled: true
       options:
         m_limit: 10
