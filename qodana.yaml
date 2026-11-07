@@ -5,7 +5,7 @@ profile:
 
 inspections:
   - enabled: true
-    name: OverlyCoupledMethod
+    name: FeatureEnvy
     options:
       m_limit: 5
 
