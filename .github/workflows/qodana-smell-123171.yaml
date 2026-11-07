@@ -26,4 +26,4 @@ jobs:
         with:
           args: --config qodana-123171.yaml
           use-annotations: true
-          post-pr-comment: true
+          post-pr-comment: false
