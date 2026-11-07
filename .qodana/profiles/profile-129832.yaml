@@ -1,0 +1,9 @@
+#129832 Andre Quintas
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: MethodWithTooManyParameters
+      enabled: true
+      options:
+        maxParameters: 4
