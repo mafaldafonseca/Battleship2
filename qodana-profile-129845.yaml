@@ -1,0 +1,17 @@
+name: qodana-profile-129845
+inspections:
+  - inspection: ClassWithTooManyResponsibilities
+    enabled: true
+    options:
+      m_limit: 20
+
+  - inspection: ClassCoupling
+    enabled: true
+    options:
+      m_includeLibraryClasses: false
+      m_limit: 15
+
+  - inspection: ClassNestingDepth
+    enabled: true
+    options:
+      m_limit: 2
