@@ -1,0 +1,27 @@
+# 129845 - Mafalda Fonseca
+name: Checkstyle MethodName Gate 129845
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  checkstyle:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run Checkstyle CLI
+        run: |
+          wget -q https://github.com/checkstyle/checkstyle/releases/download/checkstyle-10.12.0/checkstyle-10.12.0-all.jar -O checkstyle.jar
+          java -jar checkstyle.jar -c checkstyle-129845.xml src/
