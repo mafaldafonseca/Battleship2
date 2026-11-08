@@ -40,6 +40,10 @@ jobs:
         with:
           args: --config qodana-123171.yaml
           use-annotations: true
+<<<<<<< HEAD
           post-pr-comment: true
 
 
+=======
+          post-pr-comment: true
+>>>>>>> b78cd42 (Add Qodana workflow properly)
