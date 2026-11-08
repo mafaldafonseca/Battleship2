@@ -1,0 +1,7 @@
+# 129845 - Mafalda Fonseca
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: FeatureEnvy
+      enabled: true
