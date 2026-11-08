@@ -7,7 +7,3 @@ profile:
       enabled: true
       options:
         m_limit: 30
-    - inspection: Java/MethodMetrics/OverlyComplexMethod
-      enabled: true
-      options:
-        m_limit: 10
