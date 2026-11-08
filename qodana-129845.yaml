@@ -1,0 +1,10 @@
+version: "1.0"
+linter: jetbrains/qodana-jvm-community:2024.3
+profile:
+  name: qodana-profile-129845.yaml
+
+projectJDK: "21"
+
+failureConditions:
+  severityThresholds:
+    any: 1
