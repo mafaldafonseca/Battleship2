@@ -38,7 +38,7 @@ jobs:
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.2
         with:
-          args: --config qodana-123171.yaml
+          args: --config qodana-123171.yaml --property=qodana.build.skip=true
           use-annotations: true
 <<<<<<< HEAD
           post-pr-comment: true
