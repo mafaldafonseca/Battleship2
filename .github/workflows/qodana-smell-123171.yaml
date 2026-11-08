@@ -25,6 +25,6 @@ jobs:
         uses: JetBrains/qodana-action@v2024.3
         with:
           pr-mode: false
-          args: --config qodana-123171.yaml --fail-threshold 1
+          args: --config,qodana-123171.yaml,--fail-threshold,1
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
