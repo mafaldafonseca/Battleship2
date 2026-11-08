@@ -16,8 +16,6 @@ jobs:
   qodana:
     runs-on: ubuntu-latest
     env:
-      # Defina como "true" se quiser focar apenas nas alterações do Pull Request,
-      # ou "false" para analisar o projeto completo.
       QODANA_PR_MODE: "false"
 
     steps:
@@ -30,7 +28,6 @@ jobs:
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.2
         with:
-          args: --config qodana-123171.yaml
+          args: --config,qodana-123171.yaml
           use-annotations: true
-          # Coloque a true se quiser que a action comente automaticamente no Pull Request
           post-pr-comment: true
