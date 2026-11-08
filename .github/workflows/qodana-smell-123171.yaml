@@ -1,4 +1,5 @@
 # 123171 - Inês Fidalgo
+
 name: Qodana Long Method - 123171
 
 on:
@@ -15,19 +16,17 @@ permissions:
 jobs:
   qodana:
     runs-on: ubuntu-latest
-    env:
-      QODANA_PR_MODE: "false"
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.2
         with:
-          args: "--config qodana-123171.yaml"
+          args: "--config qodana-123171.yaml --no-diff"
           use-annotations: true
           post-pr-comment: true
