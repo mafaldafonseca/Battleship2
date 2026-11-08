@@ -45,7 +45,7 @@ public class BoardViewer extends JXFrame {
      *
      * @param game Objeto do jogo
      */
-    public void updateBoard(IGame game) {
+    public void Update_Board(IGame game) {
         if (game == null) return;
 
         // Guardar os tiros efetuados
