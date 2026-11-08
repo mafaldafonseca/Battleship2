@@ -432,13 +432,4 @@ public abstract class Ship implements IShip
 	return "[" + category + " " + bearing + " " + pos + "]";
     }
 
-	// Método adicionado para provocar o smell Feature Envy (Passo 9)
-	public boolean checkPositionDetails(IPosition targetPos) {
-		System.out.println("Row: " + targetPos.getRow());
-		System.out.println("Column: " + targetPos.getColumn());
-		System.out.println("Is Hit: " + targetPos.isHit());
-		System.out.println("Is Inside: " + targetPos.isInside());
-		return targetPos.getRow() > 0 && targetPos.getColumn() > 0;
-	}
-
 }
