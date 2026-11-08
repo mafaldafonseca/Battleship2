@@ -1,0 +1,43 @@
+name: Qodana Long Method - 123171
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  qodana:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Create Qodana Config
+        run: |
+          cat <<EOF > qodana-123171.yaml
+          version: "1.0"
+          linter: jetbrains/qodana-jvm-community:2026.2
+          projectJDK: "21"
+          profile:
+            path: qodana/profiles/profile-123171.yaml
+          failureConditions:
+            severityThresholds:
+              any: 0
+          EOF
+
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2026.2
+        with:
+          args: --config qodana-123171.yaml --property=qodana.build.skip=true
+          use-annotations: true
+          post-pr-comment: true

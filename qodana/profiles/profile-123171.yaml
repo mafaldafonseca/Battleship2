@@ -1,0 +1,9 @@
+# 123171 - Inês Fidalgo
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: Java/MethodMetrics/OverlyLongMethod
+      enabled: true
+      options:
+        m_limit: 30
