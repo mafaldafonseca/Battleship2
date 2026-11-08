@@ -1,4 +1,3 @@
-
 name: Qodana Long Method - 123171
 
 on:
@@ -24,9 +23,8 @@ jobs:
           fetch-depth: 0
 
       - name: Qodana Scan
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/data/project" \
-            -v "${{ runner.temp }}/qodana-results:/data/results" \
-            jetbrains/qodana-jvm-community:2026.2 \
-            --config qodana-123171.yaml
+        uses: JetBrains/qodana-action@v2026.2
+        with:
+          args: --config qodana-123171.yaml
+          use-annotations: true
+          post-pr-comment: true
