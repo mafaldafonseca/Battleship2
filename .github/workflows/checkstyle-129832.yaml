@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Checkstyle
-        uses: nikitasavchenko/checkstyle-action@master
+      - name: Run check style
+      uses: nikitasavinov/checkstyle-action@1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           checkstyle_config: checkstyle-12345.xml
