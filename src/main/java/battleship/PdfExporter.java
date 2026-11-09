@@ -79,7 +79,7 @@ public class PdfExporter {
      * Exporta todo o conteúdo acumulado em memória para um ficheiro PDF no final da partida.
      * @param nomeFicheiro Caminho/nome do ficheiro PDF a gerar (ex: "relatorio_battleship.pdf").
      */
-    public void exportarParaPdf(String nomeFicheiro, int extra1, int extra2, int extra3, int extra4, int extra5) {
+    public void exportarParaPdf(String nomeFicheiro, int extra1, int extra2, int extra3, int extra4, int extra5, int extra6) {
         try (PDDocument document = new PDDocument()) {
 
             PDPage page = new PDPage();
