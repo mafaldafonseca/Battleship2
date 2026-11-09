@@ -1,4 +1,5 @@
 # 123281 - Joana Magarreiro
+version: "1.0"
 profile:
   base:
     name: empty
