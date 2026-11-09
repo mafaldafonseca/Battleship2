@@ -51,10 +51,10 @@ public class Tasks {
 
 		StopWatch relogio = new StopWatch();
 
-		long tempoTotal = 0;
+		long TempoTotal = 0;
 
         Scoreboard scoreboard = new Scoreboard();
-        int rajadas = 0;
+        int RAJADAS = 0;
         long inicioJogo = 0;
 
 		menuHelp();
@@ -66,7 +66,7 @@ public class Tasks {
 
 			switch (command) {
                 case GERAFROTA:
-                    rajadas = 0;
+                    RAJADAS = 0;
                     inicioJogo = System.currentTimeMillis();
 					myFleet = Fleet.createRandom();
 					game = new Game(myFleet);
@@ -79,7 +79,7 @@ public class Tasks {
 
 					break;
 				case LEFROTA:
-                    rajadas = 0;
+                    RAJADAS = 0;
                     inicioJogo = System.currentTimeMillis();
 					myFleet = buildFleet(in);
 					game = new Game(myFleet);
@@ -104,18 +104,18 @@ public class Tasks {
 						relogio.start();
 
 						game.readEnemyFire(in);
-                        rajadas++;
+                        RAJADAS++;
 
 						relogio.stop();
 
 						long tempoJogada = relogio.getTime(TimeUnit.MILLISECONDS);
-						tempoTotal += tempoJogada;
+						TempoTotal += tempoJogada;
 
 						System.out.printf("Tempo da jogada: %.3f segundos%n",
 								tempoJogada / 1000.0);
 
 						System.out.printf("Tempo total acumulado: %.3f segundos%n",
-								tempoTotal / 1000.0);
+								TempoTotal / 1000.0);
 
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
@@ -127,7 +127,7 @@ public class Tasks {
 						pdf.escrever(output);
 
                         if (game.getRemainingShips() == 0) {
-                            scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
+                            scoreboard.registar(RAJADAS, System.currentTimeMillis() - inicioJogo);
                             game.over();
                             System.exit(0);
                         }
@@ -137,7 +137,7 @@ public class Tasks {
 					if (game != null) {
                         while (game.getRemainingShips() > 0){
                             game.randomEnemyFire();
-                            rajadas++;
+                            RAJADAS++;
                             myFleet.printStatus();
 							game.printMyBoard(true, false);
 
@@ -155,7 +155,7 @@ public class Tasks {
 						}
 
                         if (game.getRemainingShips() == 0) {
-                            scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
+                            scoreboard.registar(RAJADAS, System.currentTimeMillis() - inicioJogo);
                             game.over();
                             System.exit(0);
                         }
