@@ -1,0 +1,14 @@
+# 123281 - Joana Magarreiro
+version: "1.0"
+profile:
+  base:
+    name: empty
+  inspections:
+    - inspection: MethodCount
+      enabled: true
+      options:
+        m_limit: 25
+    - inspection: ClassComplexity
+      enabled: true
+      options:
+        m_limit: 70
