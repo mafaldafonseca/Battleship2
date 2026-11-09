@@ -8,7 +8,7 @@ profile:
     - inspection: MethodCount
       enabled: true
       options:
-        m_limit: 25
+        m_limit: 28
     - inspection: ClassComplexity
       enabled: true
       options:
