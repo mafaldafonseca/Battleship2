@@ -186,4 +186,119 @@ import java.util.ArrayList;
 			fleet.addShip(ship);
 			assertDoesNotThrow(fleet::printStatus, "Error: printStatus should not throw any exceptions.");
 		}
+
+		@Test
+		@DisplayName("Deve lançar AssertionError ao tentar adicionar um navio nulo à frota")
+		void testAddNullShip() {
+			Fleet fleet = new Fleet();
+			assertThrows(AssertionError.class, () -> fleet.addShip(null));
+		}
+
+		@Test
+		@DisplayName("Deve devolver false ao tentar adicionar um navio quando a frota excede o tamanho máximo")
+		void testAddShipWhenFleetExceedsMaxSize() {
+			Fleet fleet = new Fleet();
+			// Adiciona navios sem colisão
+			int added = 0;
+			for (int row = 0; row < 10; row += 2) {
+				for (int col = 0; col < 10; col += 2) {
+					boolean result = fleet.addShip(new Barge(Compass.NORTH, new Position(row, col)));
+					if (result) {
+						added++;
+					} else {
+						// Assim que falhar por excesso de tamanho, confirma que devolveu false e termina
+						assertFalse(result);
+						return;
+					}
+				}
+			}
+			fail("Deveria ter atingido o limite FLEET_SIZE e devolvido false");
+		}
+
+		@Test
+		@DisplayName("Deve lançar AssertionError ao procurar navios com categoria nula")
+		void testGetShipsLikeWithNullCategory() {
+			Fleet fleet = new Fleet();
+			assertThrows(AssertionError.class, () -> fleet.getShipsLike(null));
+		}
+
+		@Test
+		@DisplayName("Deve devolver uma lista vazia quando não existem navios da categoria procurada")
+		void testGetShipsLikeWhenCategoryDoesNotMatch() {
+			Fleet fleet = new Fleet();
+			fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));
+
+			List<IShip> result = fleet.getShipsLike("Fragata");
+
+			assertTrue(result.isEmpty());
+		}
+
+		@Test
+		@DisplayName("Deve devolver os navios afundados quando existirem na frota")
+		void testGetSunkShipsWhenShipIsSunk() {
+			Fleet fleet = new Fleet();
+			Position pos = new Position(1, 1);
+			IShip ship = new Barge(Compass.NORTH, pos);
+			fleet.addShip(ship);
+
+			// Afunda a barca (tamanho 1)
+			ship.shoot(pos);
+
+			List<IShip> sunkShips = fleet.getSunkShips();
+			assertEquals(1, sunkShips.size());
+			assertTrue(sunkShips.contains(ship));
+		}
+
+		@Test
+		@DisplayName("Deve lançar AssertionError ao verificar navio numa posição nula")
+		void testShipAtWithNullPosition() {
+			Fleet fleet = new Fleet();
+			assertThrows(AssertionError.class, () -> fleet.shipAt(null));
+		}
+
+		@Test
+		@DisplayName("Deve lançar AssertionError ao tentar imprimir uma lista de navios nula")
+		void testPrintShipsWithNullList() {
+			Fleet fleet = new Fleet();
+			assertThrows(AssertionError.class, () -> fleet.printShips(null));
+		}
+
+		@Test
+		@DisplayName("Deve imprimir todos os navios de uma lista válida sem lançar exceções")
+		void testPrintShipsWithValidList() {
+			Fleet fleet = new Fleet();
+			List<IShip> ships = List.of(new Barge(Compass.NORTH, new Position(1, 1)));
+			assertDoesNotThrow(() -> fleet.printShips(ships));
+		}
+
+		@Test
+		@DisplayName("Deve lançar AssertionError ao imprimir navios por categoria nula")
+		void testPrintShipsByCategoryWithNull() {
+			Fleet fleet = new Fleet();
+			assertThrows(AssertionError.class, () -> fleet.printShipsByCategory(null));
+		}
+
+		@Test
+		@DisplayName("Deve imprimir os navios de uma categoria válida sem lançar exceções")
+		void testPrintShipsByCategoryWithValidCategory() {
+			Fleet fleet = new Fleet();
+			fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));
+			assertDoesNotThrow(() -> fleet.printShipsByCategory("Barca"));
+		}
+
+		@Test
+		@DisplayName("Deve imprimir todos os navios a flutuar sem lançar exceções")
+		void testPrintFloatingShips() {
+			Fleet fleet = new Fleet();
+			fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));
+			assertDoesNotThrow(fleet::printFloatingShips);
+		}
+
+		@Test
+		@DisplayName("Deve imprimir todos os navios da frota sem lançar exceções")
+		void testPrintAllShips() {
+			Fleet fleet = new Fleet();
+			fleet.addShip(new Barge(Compass.NORTH, new Position(1, 1)));
+			assertDoesNotThrow(fleet::printAllShips);
+		}
 	}
