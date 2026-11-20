@@ -237,5 +237,144 @@ public class ShipTest {
         assertEquals(3, shipBorder.getAdjacentPositions().size(), "Error: The number of adjacent positions of a barge in the middle of the tray should be 8.");
     }
 
+    @Test
+    @DisplayName("Deve lançar AssertionError quando os argumentos de buildShip são nulos")
+    void testBuildShipWithNullArguments() {
+        Position pos = new Position(1, 1);
+        assertThrows(AssertionError.class, () -> Ship.buildShip(null, Compass.NORTH, pos));
+        assertThrows(AssertionError.class, () -> Ship.buildShip("Barca", null, pos));
+        assertThrows(AssertionError.class, () -> Ship.buildShip("Barca", Compass.NORTH, null));
+    }
+
+    @Test
+    @DisplayName("Deve criar o navio correto para cada tipo válido e devolver null para tipo inválido")
+    void testBuildShipAllTypes() {
+        Position pos = new Position(1, 1);
+
+        IShip barca = Ship.buildShip("barca", Compass.NORTH, pos);
+        assertInstanceOf(Barge.class, barca);
+
+        IShip caravela = Ship.buildShip("caravela", Compass.NORTH, pos);
+        assertInstanceOf(Caravel.class, caravela);
+
+        IShip nau = Ship.buildShip("nau", Compass.NORTH, pos);
+        assertInstanceOf(Carrack.class, nau);
+
+        IShip fragata = Ship.buildShip("fragata", Compass.NORTH, pos);
+        assertInstanceOf(Frigate.class, fragata);
+
+        IShip galeao = Ship.buildShip("galeao", Compass.NORTH, pos);
+        assertInstanceOf(Galleon.class, galeao);
+
+        IShip invalido = Ship.buildShip("Submarino", Compass.NORTH, pos);
+        assertNull(invalido);
+    }
+
+    @Test
+    @DisplayName("Deve devolver as posições adjacentes sem duplicados nem posições do próprio navio")
+    void testGetAdjacentPositionsForMultiCellShip() {
+        IShip caravel = new Caravel(Compass.EAST, new Position(2, 2));
+        List<IPosition> adjacents = caravel.getAdjacentPositions();
+
+        assertEquals(10, adjacents.size());
+        assertFalse(adjacents.contains(new Position(2, 2)));
+        assertFalse(adjacents.contains(new Position(2, 3)));
+    }
+
+    @Test
+    @DisplayName("Deve devolver a posição inicial do navio")
+    void testGetPosition() {
+        Position pos = new Position(3, 4);
+        IShip ship = new Barge(Compass.NORTH, pos);
+        assertEquals(pos, ship.getPosition());
+    }
+
+    @Test
+    @DisplayName("Deve calcular corretamente os limites (topo, fundo, esquerda, direita) para navios com múltiplas células")
+    void testBoundaryPositionsForMultiCellShips() {
+        // Caravela vertical (tamanho 2) a começar em (3, 4) -> ocupa (3, 4) e (4, 4)
+        IShip verticalShip = new Caravel(Compass.NORTH, new Position(3, 4));
+        assertEquals(3, verticalShip.getTopMostPos());
+        assertEquals(4, verticalShip.getBottomMostPos());
+        assertEquals(4, verticalShip.getLeftMostPos());
+        assertEquals(4, verticalShip.getRightMostPos());
+
+        // Caravela horizontal (tamanho 2) a começar em (3, 4) -> ocupa (3, 4) e (3, 5)
+        IShip horizontalShip = new Caravel(Compass.EAST, new Position(3, 4));
+        assertEquals(3, horizontalShip.getTopMostPos());
+        assertEquals(3, horizontalShip.getBottomMostPos());
+        assertEquals(4, horizontalShip.getLeftMostPos());
+        assertEquals(5, horizontalShip.getRightMostPos());
+    }
+
+    @Test
+    @DisplayName("Deve atualizar os limites superior e esquerdo quando as posições não estão ordenadas")
+    void testTopAndLeftMostPosWithUnorderedPositions() {
+        IShip ship = new Caravel(Compass.NORTH, new Position(3, 4));
+        ship.getPositions().clear();
+        ship.getPositions().add(new Position(4, 5));
+        ship.getPositions().add(new Position(3, 4));
+
+        assertEquals(3, ship.getTopMostPos());
+        assertEquals(4, ship.getLeftMostPos());
+    }
+
+    @Test
+    @DisplayName("Deve lançar AssertionError quando os argumentos são nulos")
+    void testNullAssertionsOnShipMethods() {
+        IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+        assertThrows(AssertionError.class, () -> ship.occupies(null));
+        assertThrows(AssertionError.class, () -> ship.tooCloseTo((IShip) null));
+        assertThrows(AssertionError.class, () -> ship.tooCloseTo((IPosition) null));
+        assertThrows(AssertionError.class, () -> ship.shoot(null));
+    }
+
+    @Test
+    @DisplayName("Deve verificar corretamente se o navio está dentro ou fora dos limites do tabuleiro")
+    void testIsInsideBoard() {
+        // 1. Dentro do tabuleiro (todas as condições true)
+        IShip insideShip = new Barge(Compass.NORTH, new Position(0, 0));
+        assertTrue(insideShip.isInsideBoard());
+
+        // 2. Fora à esquerda (getLeftMostPos() < 0)
+        IShip outsideLeft = new Barge(Compass.NORTH, new Position(0, -1));
+        assertFalse(outsideLeft.isInsideBoard());
+
+        // 3. Fora à direita (getRightMostPos() > Game.BOARD_SIZE - 1)
+        IShip outsideRight = new Barge(Compass.NORTH, new Position(0, Game.BOARD_SIZE));
+        assertFalse(outsideRight.isInsideBoard());
+
+        // 4. Fora em cima (getTopMostPos() < 0)
+        IShip outsideTop = new Barge(Compass.NORTH, new Position(-1, 0));
+        assertFalse(outsideTop.isInsideBoard());
+
+        // 5. Fora em baixo (getBottomMostPos() > Game.BOARD_SIZE - 1)
+        IShip outsideBottom = new Barge(Compass.NORTH, new Position(Game.BOARD_SIZE, 0));
+        assertFalse(outsideBottom.isInsideBoard());
+    }
+
+    @Test
+    @DisplayName("Deve lançar AssertionError ao disparar para uma posição fora do tabuleiro")
+    void testShootOutsideBoard() {
+        IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
+        assertThrows(AssertionError.class, () -> ship.shoot(new Position(-1, 0)));
+    }
+
+    @Test
+    @DisplayName("Deve afundar o navio ao chamar sink()")
+    void testSink() {
+        IShip ship = new Caravel(Compass.NORTH, new Position(2, 2));
+        assertTrue(ship.stillFloating());
+        ship.sink();
+        assertFalse(ship.stillFloating());
+    }
+
+    @Test
+    @DisplayName("Deve devolver a representação textual esperada do navio")
+    void testToString() {
+        Position pos = new Position(1, 2);
+        IShip ship = new Barge(Compass.NORTH, pos);
+        assertEquals("[Barca " + Compass.NORTH + " " + pos + "]", ship.toString());
+    }
 
 }
