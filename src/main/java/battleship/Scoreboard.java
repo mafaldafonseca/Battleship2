@@ -20,7 +20,7 @@ public class Scoreboard {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final String DB_URL = "jdbc:sqlite:scoreboard.db";
+    private final String dbUrl;
 
     private static final DateTimeFormatter FORMATO_DATA =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -29,14 +29,23 @@ public class Scoreboard {
      * Cria a tabela dos jogos, caso ainda não exista.
      */
     public Scoreboard() {
+        this("jdbc:sqlite:scoreboard.db");
+    }
+
+    Scoreboard(String dbUrl) {
+        this.dbUrl = dbUrl;
+
         String sql = "CREATE TABLE IF NOT EXISTS jogos ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + "data TEXT NOT NULL, "
                 + "rajadas INTEGER NOT NULL, "
                 + "duracao_ms INTEGER NOT NULL)";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+
+        try (Connection conn = DriverManager.getConnection(dbUrl);
              Statement st = conn.createStatement()) {
+
             st.execute(sql);
+
         } catch (SQLException e) {
             LOGGER.error("Erro ao criar a base de dados do scoreboard: {}", e.getMessage());
         }
@@ -50,7 +59,7 @@ public class Scoreboard {
      */
     public void registar(int rajadas, long duracaoMs) {
         String sql = "INSERT INTO jogos (data, rajadas, duracao_ms) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, LocalDateTime.now().format(FORMATO_DATA));
             ps.setInt(2, rajadas);
@@ -69,7 +78,7 @@ public class Scoreboard {
     public void imprimirTop(int limite) {
         String sql = "SELECT data, rajadas, duracao_ms FROM jogos "
                 + "ORDER BY rajadas ASC, duracao_ms ASC LIMIT ?";
-        try (Connection conn = DriverManager.getConnection(DB_URL);
+        try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, limite);
             try (ResultSet rs = ps.executeQuery()) {

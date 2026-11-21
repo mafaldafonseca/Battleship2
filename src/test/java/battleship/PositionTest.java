@@ -60,10 +60,11 @@ public class PositionTest {
 		assertEquals('C', position.getClassicRow(), "Failed to get row: expected 2 but got " + position.getRow());
 	}
 
-	@Test
-	void getClassicColumn() {
-		assertEquals(3, position.getColumn(), "Failed to get column: expected 3 but got " + position.getColumn());
-	}
+    @Test
+    @DisplayName("Verificar a coluna na representação clássica")
+    void getClassicColumn() {
+        assertEquals(4, position.getClassicColumn());
+    }
 
 	@Test
 	void isValid1() {
@@ -182,4 +183,48 @@ public class PositionTest {
 				"Incorrect string representation: expected '" + expected +
 						"' but got '" + position.toString() + "'");
 	}
+
+    @Test
+    @DisplayName("Testar construtor com coordenadas clássicas")
+    void constructorClassic() {
+        Position pos = new Position('C', 4);
+        assertEquals(2, pos.getRow());
+        assertEquals(3, pos.getColumn());
+    }
+
+    @Test
+    @DisplayName("Testar criação de posição aleatória")
+    void testRandomPosition() {
+        Position pos = Position.randomPosition();
+        assertNotNull(pos);
+        assertTrue(pos.isInside());
+    }
+
+    @Test
+    @DisplayName("Testar posições adjacentes no centro do tabuleiro")
+    void testAdjacentPositionsCenter() {
+        Position pos = new Position(5, 5);
+        assertEquals(8, pos.adjacentPositions().size());
+    }
+
+    @Test
+    @DisplayName("Testar posições adjacentes no canto do tabuleiro")
+    void testAdjacentPositionsCorner() {
+        Position pos = new Position(0, 0);
+        assertEquals(3, pos.adjacentPositions().size());
+    }
+
+    @Test
+    @DisplayName("Testar posições adjacentes na borda do tabuleiro")
+    void testAdjacentPositionsEdge() {
+        Position pos = new Position(0, 5);
+        assertEquals(5, pos.adjacentPositions().size());
+    }
+
+    @Test
+    @DisplayName("Testar posições com linhas diferentes")
+    void testEqualsDifferentRows() {
+        Position other = new Position(3, 3);
+        assertFalse(position.equals(other));
+    }
 }
