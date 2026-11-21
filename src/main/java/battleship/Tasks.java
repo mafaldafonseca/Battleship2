@@ -7,13 +7,33 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.apache.commons.lang3.time.StopWatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The type Tasks.
  */
 public class Tasks {
 
-	private static final BoardViewer viewer = new BoardViewer();
+	interface BoardDisplay {
+		void setVisible(boolean visible);
+
+		void updateBoard(Game game);
+	}
+
+	private static class SwingBoardDisplay implements BoardDisplay {
+		private final BoardViewer viewer = new BoardViewer();
+
+		@Override
+		public void setVisible(boolean visible) {
+			viewer.setVisible(visible);
+		}
+
+		@Override
+		public void updateBoard(Game game) {
+			viewer.updateBoard(game);
+		}
+	}
 	/**
 	 * The constant LOGGER.
 	 */
@@ -42,7 +62,16 @@ public class Tasks {
 	 * This task also tests the fighting element of a round of three shots
 	 */
 	public static void menu() {
+		menu(new Scanner(System.in), new SwingBoardDisplay(), new Scoreboard(),
+				Fleet::createRandom, 500, game -> {
+					game.over();
+					System.exit(0);
+				});
+	}
 
+	static void menu(Scanner in, BoardDisplay viewer, Scoreboard scoreboard,
+					 Supplier<IFleet> randomFleetFactory, long simulationDelayMs,
+					 Consumer<Game> gameWon) {
 		viewer.setVisible(true);
 
 		IFleet myFleet = null;
@@ -53,14 +82,12 @@ public class Tasks {
 
 		long tempoTotal = 0;
 
-        Scoreboard scoreboard = new Scoreboard();
         int rajadas = 0;
         long inicioJogo = 0;
 
 		menuHelp();
 
 		System.out.print("> ");
-		Scanner in = new Scanner(System.in);
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
 
@@ -68,7 +95,7 @@ public class Tasks {
                 case GERAFROTA:
                     rajadas = 0;
                     inicioJogo = System.currentTimeMillis();
-					myFleet = Fleet.createRandom();
+					myFleet = randomFleetFactory.get();
 					game = new Game(myFleet);
 
 					pdf = game.getPdfExporter();
@@ -128,8 +155,7 @@ public class Tasks {
 
                         if (game.getRemainingShips() == 0) {
                             scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
-                            game.over();
-                            System.exit(0);
+                            gameWon.accept(game);
                         }
 					}
 					break;
@@ -148,7 +174,7 @@ public class Tasks {
 							pdf.escrever(output);
 
 							try {
-								Thread.sleep(500);
+								Thread.sleep(simulationDelayMs);
 							} catch (InterruptedException e) {
 								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
 							}
@@ -156,8 +182,7 @@ public class Tasks {
 
                         if (game.getRemainingShips() == 0) {
                             scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
-                            game.over();
-                            System.exit(0);
+                            gameWon.accept(game);
                         }
 					}
 					break;
@@ -279,19 +304,17 @@ public class Tasks {
 			part2 = in.next(); // Segundo token, se disponível
 		}
 
-		String input = (part2 != null) ? part1 + part2 : part1;
+		String input = part2 != null ? part1 + part2 : part1;
 
 		// Normalizar o input para tratar letras maiúsculas e minúsculas
 		input = input.toUpperCase();
 
 		// Verificar os dois formatos possíveis: compactos e com espaço
-		if (input.matches("[A-Z]\\d+")) {
+		if (part2 != null && part1.matches("[A-Z]")) {
+			return new Position(part1.charAt(0), Integer.parseInt(part2));
+		} else if (input.matches("[A-Z]\\d+")) {
 			char column = input.charAt(0); // Extrair a coluna
 			int row = Integer.parseInt(input.substring(1)); // Extrair a linha
-			return new Position(column, row);
-		} else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
-			char column = part1.charAt(0); // Extrair a coluna
-			int row = Integer.parseInt(part2); // Extrair a linha
 			return new Position(column, row);
 		} else {
 			throw new IllegalArgumentException("Formato inválido. Use 'A3', 'A 3' ou similar.");
