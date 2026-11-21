@@ -15,7 +15,7 @@ public class Tasks {
 
 	private static final BoardViewer viewer = new BoardViewer();
 	/**
-	 * The constant LOGGER.
+	 * The constant LOGGER.K
 	 */
 	private static final Logger LOGGER = LogManager.getLogger();
 
@@ -117,14 +117,7 @@ public class Tasks {
 						System.out.printf("Tempo total acumulado: %.3f segundos%n",
 								tempoTotal / 1000.0);
 
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
-
-						viewer.updateBoard(game);
-
-						Game currentGame = game;
-						String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
-						pdf.escrever(output);
+                        atualizarEstadoJogo(myFleet, game, pdf);
 
                         if (game.getRemainingShips() == 0) {
                             scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
@@ -138,14 +131,7 @@ public class Tasks {
                         while (game.getRemainingShips() > 0){
                             game.randomEnemyFire();
                             rajadas++;
-                            myFleet.printStatus();
-							game.printMyBoard(true, false);
-
-							viewer.updateBoard(game);
-
-							Game currentGame = game;
-							String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
-							pdf.escrever(output);
+                            atualizarEstadoJogo(myFleet, game, pdf);
 
 							try {
 								Thread.sleep(500);
@@ -183,7 +169,18 @@ public class Tasks {
 		System.out.println(GOODBYE_MESSAGE);
 	}
 
-	/**
+    private static void atualizarEstadoJogo(IFleet myFleet, Game game, PdfExporter pdf) {
+        myFleet.printStatus();
+        game.printMyBoard(true, false);
+
+        viewer.updateBoard(game);
+
+        Game currentGame = game;
+        String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+        pdf.escrever(output);
+    }
+
+    /**
 	 * This function provides help information about the menu commands.
 	 */
 	public static void menuHelp() {
