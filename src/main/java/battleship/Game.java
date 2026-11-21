@@ -244,7 +244,8 @@ public class Game implements IGame
 		// Gerar coordenadas únicas até atingir o número definido por NUMBER_SHOTS
 
 		IPosition newShot = null;
-		if (candidateShots.size() >= Game.NUMBER_SHOTS)
+        boolean hasEnoughCandidates = candidateShots.size() >= Game.NUMBER_SHOTS;
+        if (hasEnoughCandidates)
 			while (shots.size() < Game.NUMBER_SHOTS) {
 				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
 				if (!shots.contains(newShot))
@@ -459,7 +460,7 @@ public class Game implements IGame
 
 		//String output = pdf.capturarOutputDoJogo(() -> {printMyBoard(true, true);});
 		System.out.println(this.pdf.historicoAtual());
-		this.pdf.exportarParaPdf("teste.pdf");
+        this.pdf.exportarParaPdf("teste.pdf", 0, 0, 0, 0, 0);
 
 		System.out.println();
 		System.out.println("+--------------------------------------------------------------+");
