@@ -9,20 +9,17 @@ import java.util.*;
 public class Game implements IGame
 {
 	/**
-	 * Prints the game board by representing the positions of ships, adjacent tiles,
-	 * shots, and other game elements onto the console. The method also optionally
-	 * displays shot positions and a legend explaining the symbols used on the board.
-	 *
-	 * @param fleet       the fleet of ships to be displayed on the board. Ships are marked
-	 *                    and their positions are shown according to their placement.
-	 * @param moves       the list of moves containing shots. If shot positions are shown,
-	 *                    they will be rendered based on their outcome (hit, miss, etc.).
-	 * @param showShots  if true, displays the shots taken during the game and marks
-	 *                    their result (hit or miss) on the board.
-	 * @param showLegend  if true, displays an explanatory legend of the symbols used
-	 *                    to represent various elements such as ships, misses, hits, etc.
-	 */
-	public static void printBoard(IFleet fleet, List<IMove> moves, boolean showShots, boolean showLegend) {
+     * Prints the game board by representing the positions of ships, adjacent tiles,
+     * shots, and other game elements onto the console. The method also optionally
+     * displays shot positions and a legend explaining the symbols used on the board.
+     *
+     * @param fleet               the fleet of ships to be displayed on the board. Ships are marked
+     *                            and their positions are shown according to their placement.
+     * @param moves               the list of moves containing shots. If shot positions are shown,
+     *                            they will be rendered based on their outcome (hit, miss, etc.).
+     * @param boardDisplayOptions
+     */
+	public static void printBoard(IFleet fleet, List<IMove> moves, BoardDisplayOptions boardDisplayOptions) {
 
 		assert fleet != null;
 		assert moves != null;
@@ -35,12 +32,12 @@ public class Game implements IGame
 
 		printShips(fleet, map);
 
-		if (showShots)
+		if (boardDisplayOptions.showShots())
 			printBoardShots(moves, map);
 
 		printBoardFrame(map);
 
-		if (showLegend) {
+		if (boardDisplayOptions.showLegend()) {
 			System.out.println("          LEGENDA");
 			System.out.println("'" + SHIP_MARKER + "'->navio, '" + SHIP_ADJACENT_MARKER + "'->adjacente a navio, '" + EMPTY_MARKER + "'->água");
 			System.out.println("'" + SHOT_SHIP_MARKER + "'->Tiro certeiro, '" + SHOT_WATER_MARKER + "'->Tiro na água");
@@ -442,12 +439,12 @@ public class Game implements IGame
 
 	public void printMyBoard(boolean show_shots, boolean show_legend)
 	{
-		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		Game.printBoard(this.myFleet, this.alienMoves, new BoardDisplayOptions(show_shots, show_legend));
 	}
 
 	public void printAlienBoard(boolean show_shots, boolean show_legend)
 	{
-		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		Game.printBoard(this.alienFleet, this.myMoves, new BoardDisplayOptions(show_shots, show_legend));
 	}
 
 	public PdfExporter getPdfExporter() {
