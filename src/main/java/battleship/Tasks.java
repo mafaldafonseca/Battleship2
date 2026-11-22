@@ -200,8 +200,8 @@ public class Tasks {
 
         viewer.updateBoard(game);
 
-        Game currentGame = game;
-        String output = pdf.capturarOutputDoJogo(() -> {currentGame.printMyBoard(true, false);});
+        String output = pdf.capturarOutputDoJogo(() -> {
+            game.printMyBoard(true, false);});
         pdf.escrever(output);
     }
 
