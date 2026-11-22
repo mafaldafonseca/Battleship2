@@ -69,19 +69,23 @@ public class BoardViewer extends JXFrame {
                     boolean hit = (fleet != null && fleet.getShips() != null) && fleet.getShips().stream()
                             .anyMatch(ship -> ship.occupies(currentPos));
 
-                    if (hit) {
-                        gridButtons[row][col].setBackground(Color.RED);
-                        gridButtons[row][col].setForeground(Color.WHITE);
-                        gridButtons[row][col].setFont(new Font("Arial", Font.BOLD, 20));
-                        gridButtons[row][col].setText("*");
-                    } else {
-                        gridButtons[row][col].setBackground(Color.GRAY);
-                        gridButtons[row][col].setForeground(Color.BLACK);
-                        gridButtons[row][col].setText("O");
-                    }
+                    updateCell(hit, row, col);
                 }
             }
         }
         repaint();
+    }
+
+    private void updateCell(boolean hit, int row, int col) {
+        if (hit) {
+            gridButtons[row][col].setBackground(Color.RED);
+            gridButtons[row][col].setForeground(Color.WHITE);
+            gridButtons[row][col].setFont(new Font("Arial", Font.BOLD, 20));
+            gridButtons[row][col].setText("*");
+        } else {
+            gridButtons[row][col].setBackground(Color.GRAY);
+            gridButtons[row][col].setForeground(Color.BLACK);
+            gridButtons[row][col].setText("O");
+        }
     }
 }
