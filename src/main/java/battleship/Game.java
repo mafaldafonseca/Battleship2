@@ -457,7 +457,7 @@ public class Game implements IGame
 
 		//String output = pdf.capturarOutputDoJogo(() -> {printMyBoard(true, true);});
 		System.out.println(this.pdf.historicoAtual());
-        this.pdf.exportarParaPdf("teste.pdf", 0, 0, 0, 0, 0);
+        this.pdf.exportarParaPdf("teste.pdf");
 
 		System.out.println();
 		System.out.println("+--------------------------------------------------------------+");

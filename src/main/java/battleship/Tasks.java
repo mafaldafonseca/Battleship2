@@ -144,7 +144,7 @@ public class Tasks {
 						System.out.printf("Tempo total acumulado: %.3f segundos%n",
 								tempoTotal / 1000.0);
 
-                        atualizarEstadoJogo(myFleet, game, pdf);
+                        atualizarEstadoJogo(myFleet, game, pdf, viewer);
 
                         if (game.getRemainingShips() == 0) {
                             scoreboard.registar(rajadas, System.currentTimeMillis() - inicioJogo);
@@ -157,7 +157,7 @@ public class Tasks {
                         while (game.getRemainingShips() > 0){
                             game.randomEnemyFire();
                             rajadas++;
-                            atualizarEstadoJogo(myFleet, game, pdf);
+                            atualizarEstadoJogo(myFleet, game, pdf, viewer);
 
 							try {
 								Thread.sleep(simulationDelayMs);
@@ -194,7 +194,7 @@ public class Tasks {
 		System.out.println(GOODBYE_MESSAGE);
 	}
 
-    private static void atualizarEstadoJogo(IFleet myFleet, Game game, PdfExporter pdf) {
+    private static void atualizarEstadoJogo(IFleet myFleet, Game game, PdfExporter pdf, BoardDisplay viewer) {
         myFleet.printStatus();
         game.printMyBoard(true, false);
 
