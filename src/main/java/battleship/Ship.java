@@ -219,11 +219,17 @@ public abstract class Ship implements IShip
     @Override
     public boolean stillFloating()
     {
-	for (int i = 0; i < getSize(); i++)
-	    if (!getPositions().get(i).isHit())
-			return true;
-	return false;
+		for (int i = 0; i < getSize(); i++) {
+			if (isPositionNotHit(i)) {
+				return true;
+			}
+		}
+		return false;
     }
+
+	private boolean isPositionNotHit(int positionIndex) {
+		return !getPositions().get(positionIndex).isHit();
+	}
 
 	/**
 	 * Gets top most pos.
