@@ -13,3 +13,7 @@
 | `Position::adjacentPositions` | Magic Number / Primitive Obsession | Introduce Constant | 129845 |
 | `Game::printShips` | Inconsistent Naming | Rename | 129845 |
 | `Ship::positions` | Mutable Field Exposure | Encapsulate Fields | 129845 |
+| `Tasks::atualizarEstadoJogo` | Missing Parameter / Undefined Dependency | Introduce Parameter | 129832 |
+| `BoardViewer::updateBoard` | Long Method / Conditional Complexity | Extract Method | 129832 |
+| `Ship::stillFloating` | Complex Conditional / Loop | Decompose Conditional | 129832 |
+| `Move::processEnemyFire` | Long Method / Duplicated Map Construction | Extract Method | 129832 |
