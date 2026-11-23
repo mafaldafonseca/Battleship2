@@ -65,16 +65,7 @@ public class BoardViewer extends JXFrame {
                     // Verificar se a posição atingiu algum navio da frota
                     boolean hit = hit(fleet, currentPos);
 
-                    if (hit) {
-                        gridButtons[row][col].setBackground(Color.RED);
-                        gridButtons[row][col].setForeground(Color.WHITE);
-                        gridButtons[row][col].setFont(new Font("Arial", Font.BOLD, 20));
-                        gridButtons[row][col].setText("*");
-                    } else {
-                        gridButtons[row][col].setBackground(Color.GRAY);
-                        gridButtons[row][col].setForeground(Color.BLACK);
-                        gridButtons[row][col].setText("O");
-                    }
+                    updateCell(hit, row, col);
                 }
             }
         }
@@ -92,5 +83,16 @@ public class BoardViewer extends JXFrame {
         return (fleet != null && fleet.getShips() != null)
                 && fleet.getShips().stream()
                 .anyMatch(ship -> ship.occupies(position));
+    private void updateCell(boolean hit, int row, int col) {
+        if (hit) {
+            gridButtons[row][col].setBackground(Color.RED);
+            gridButtons[row][col].setForeground(Color.WHITE);
+            gridButtons[row][col].setFont(new Font("Arial", Font.BOLD, 20));
+            gridButtons[row][col].setText("*");
+        } else {
+            gridButtons[row][col].setBackground(Color.GRAY);
+            gridButtons[row][col].setForeground(Color.BLACK);
+            gridButtons[row][col].setText("O");
+        }
     }
 }
