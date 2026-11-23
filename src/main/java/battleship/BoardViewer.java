@@ -59,15 +59,11 @@ public class BoardViewer extends JXFrame {
                 IPosition currentPos = new Position(row, col);
 
                 // Verificar se a posição atual esta presente nas jogadas efetuadas
-                boolean wasShot = moves != null && moves.stream()
-                        .filter(move -> move != null && move.getShots() != null)
-                        .flatMap(move -> move.getShots().stream())
-                        .anyMatch(pos -> pos.equals(currentPos));
+                boolean wasShot = wasShot(moves, currentPos);
 
                 if (wasShot) {
                     // Verificar se a posição atingiu algum navio da frota
-                    boolean hit = (fleet != null && fleet.getShips() != null) && fleet.getShips().stream()
-                            .anyMatch(ship -> ship.occupies(currentPos));
+                    boolean hit = hit(fleet, currentPos);
 
                     if (hit) {
                         gridButtons[row][col].setBackground(Color.RED);
@@ -83,5 +79,18 @@ public class BoardViewer extends JXFrame {
             }
         }
         repaint();
+    }
+
+    private boolean wasShot(List<IMove> moves, IPosition position) {
+        return moves != null && moves.stream()
+                .filter(move -> move != null && move.getShots() != null)
+                .flatMap(move -> move.getShots().stream())
+                .anyMatch(pos -> pos.equals(position));
+    }
+
+    private boolean hit(IFleet fleet, IPosition position) {
+        return (fleet != null && fleet.getShips() != null)
+                && fleet.getShips().stream()
+                .anyMatch(ship -> ship.occupies(position));
     }
 }
