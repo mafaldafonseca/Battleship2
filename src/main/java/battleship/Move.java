@@ -154,34 +154,8 @@ public class Move implements IMove {
 			System.out.println("Jogada nº" + this.number + " -> " + output);
 		}
 
-		// Criar o mapa para o JSON
-		Map<String, Object> response = new HashMap<>();
-		response.put("validShots", validShots);
-		response.put("outsideShots", outsideShots);
-		response.put("repeatedShots", repeatedShots);
-		response.put("missedShots", missedShots);
-
-		// Criar a lista de barcos afundados
-		List<Map<String, Object>> sunkBoats = new ArrayList<>();
-		for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
-			Map<String, Object> boat = new HashMap<>();
-			boat.put("type", entry.getKey());
-			boat.put("count", entry.getValue());
-			sunkBoats.add(boat);
-		}
-		response.put("sunkBoats", sunkBoats);
-
-		// Criar a lista de acertos em barcos que não foram afundados
-		List<Map<String, Object>> boatHits = new ArrayList<>();
-		for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
-			if (!sunkBoatsCount.containsKey(entry.getKey())) {
-				Map<String, Object> boat = new HashMap<>();
-				boat.put("type", entry.getKey());
-				boat.put("hits", entry.getValue());
-				boatHits.add(boat);
-			}
-		}
-		response.put("hitsOnBoats", boatHits);
+		Map<String, Object> response = buildResponse(validShots, outsideShots, repeatedShots,
+				missedShots, sunkBoatsCount, hitsPerBoat);
 
 		// Serializar o JSON utilizando Jackson
 		String jsonString;
@@ -201,5 +175,36 @@ public class Move implements IMove {
 
 		// Retornar o JSON
 		return jsonString;
+	}
+
+	private Map<String, Object> buildResponse(int validShots, int outsideShots, int repeatedShots,
+											  int missedShots, Map<String, Integer> sunkBoatsCount,
+											  Map<String, Integer> hitsPerBoat) {
+		Map<String, Object> response = new HashMap<>();
+		response.put("validShots", validShots);
+		response.put("outsideShots", outsideShots);
+		response.put("repeatedShots", repeatedShots);
+		response.put("missedShots", missedShots);
+
+		List<Map<String, Object>> sunkBoats = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
+			Map<String, Object> boat = new HashMap<>();
+			boat.put("type", entry.getKey());
+			boat.put("count", entry.getValue());
+			sunkBoats.add(boat);
+		}
+		response.put("sunkBoats", sunkBoats);
+
+		List<Map<String, Object>> boatHits = new ArrayList<>();
+		for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
+			if (!sunkBoatsCount.containsKey(entry.getKey())) {
+				Map<String, Object> boat = new HashMap<>();
+				boat.put("type", entry.getKey());
+				boat.put("hits", entry.getValue());
+				boatHits.add(boat);
+			}
+		}
+		response.put("hitsOnBoats", boatHits);
+		return response;
 	}
 }
